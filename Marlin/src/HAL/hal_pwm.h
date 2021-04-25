@@ -53,6 +53,8 @@ TIM5		PA0  PA1  PA2   PA3
 #ifndef FIRMWARE_USER_HARDWARE_PWM_H_
 #define FIRMWARE_USER_HARDWARE_PWM_H_
 
+#include "../common/common.h"
+
 typedef enum {
 	PWM_TIM1_CH1,
 	PWM_TIM1_CH2,
@@ -74,6 +76,7 @@ typedef enum {
 	PWM_TIM5_CH2,
 	PWM_TIM5_CH3,
 	PWM_TIM5_CH4,
+	PWM_TIM_CH_INVALID
 } PWM_TIM_CHN_E;
 
 typedef enum {
@@ -90,6 +93,7 @@ typedef enum {
 	PWM_TIM2_FULL,
 	PWM_TIM3_FULL,
 	PWM_TIM4_FULL,
+	PWM_TIM_INVALID,
 } PWM_TIM_E;
 
 typedef enum {
@@ -97,6 +101,7 @@ typedef enum {
 	PWM_CH2,
 	PWM_CH3,
 	PWM_CH4,
+	PWN_CH_INVALID,
 } PWM_CHN_E;
 
 void HAL_PwnConfig(uint8_t tim, uint8_t chn, uint32_t freq, uint16_t period) ;
@@ -104,5 +109,18 @@ void HAL_PwmInit(PWM_TIM_CHN_E tim_chn, uint8_t pin, uint32_t freq, uint16_t per
 void HAL_PwmInit(uint8_t tim, uint8_t chn, uint8_t pin, uint32_t freq, uint16_t period);
 void HAL_PwmSetPulse(PWM_TIM_CHN_E tim_chn, uint16_t pulse);
 void HAL_PwmSetPulse(uint8_t tim, uint8_t chn, uint16_t pulse);
+
+class HalPWM {
+ public:
+  HalPWM() {};
+	HalPWM(PWM_TIM_CHN_E ch, uint32_t freq, uint16_t period) {
+		Init(ch, freq, period);
+	}
+	ErrCode Init(PWM_TIM_CHN_E ch, uint32_t freq, uint16_t period);
+	ErrCode SetPulse(uint16_t pulse);
+ private:
+	uint8_t tim_ = PWM_TIM_INVALID;
+	uint8_t ch_ = PWN_CH_INVALID;
+};
 
 #endif  // FIRMWARE_USER_HARDWARE_PWM_H_

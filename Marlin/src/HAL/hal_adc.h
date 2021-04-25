@@ -20,14 +20,14 @@
  */
 
 
-#ifndef _ADC_H_
-#define _ADC_H_
+#ifndef _HAL_ADC_H_
+#define _HAL_ADC_H_
 
 #include <stdio.h>
 
 #define POWER_MV (3.3 * 1000)  // 电压 mv
-#define ADC_DEEP 16
-#define ADC_MAX_DEV_COUNT 3
+#define ADC_DEEP 6
+#define ADC_MAX_DEV_COUNT 7
 #define ADC_CACHE_SIZE (ADC_DEEP * ADC_MAX_DEV_COUNT)
 typedef void(*ADC_CB_F) (void);  // 中断回调函数
 
@@ -37,25 +37,27 @@ typedef enum {
     ADC_TIM_2,
     ADC_TIM_3,
     ADC_TIM_4,
+    ADC_TIM_INVALID
 } ADC_TIM_E;
 
 typedef enum {
-    ADC_CH_0 ,  // PA0
-    ADC_CH_1 ,  // PA1
-    ADC_CH_2 ,  // PA2
-    ADC_CH_3 ,  // PA3
-    ADC_CH_4 ,  // PA4
-    ADC_CH_5 ,  // PA5
-    ADC_CH_6 ,  // PA6
-    ADC_CH_7 ,  // PA7
-    ADC_CH_8 ,  // PB0
-    ADC_CH_9 ,  // PB1
-    ADC_CH_10,  // PC0
-    ADC_CH_11,  // PC1
-    ADC_CH_12,  // PC2
-    ADC_CH_13,  // PC3
-    ADC_CH_14,  // PC4
-    ADC_CH_15,  // PC5
+    ADC_CH_0 ,  // PA_0
+    ADC_CH_1 ,  // PA_1
+    ADC_CH_2 ,  // PA_2
+    ADC_CH_3 ,  // PA_3
+    ADC_CH_4 ,  // PA_4
+    ADC_CH_5 ,  // PA_5
+    ADC_CH_6 ,  // PA_6
+    ADC_CH_7 ,  // PA_7
+    ADC_CH_8 ,  // PB_0
+    ADC_CH_9 ,  // PB_1
+    ADC_CH_10,  // PC_0
+    ADC_CH_11,  // PC_1
+    ADC_CH_12,  // PC_2
+    ADC_CH_13,  // PC_3
+    ADC_CH_14,  // PC_4
+    ADC_CH_15,  // PC_5
+    ADC_CH_INVALID,
 } ADC_CHN_E;
 
 uint8_t HAL_adc_init(uint8_t pin, ADC_TIM_E tim, uint16_t period_us);
@@ -65,5 +67,22 @@ uint16_t ADC_GetCusum(uint8_t index);
 void ADC_CaptureEnable();
 void ADC_CaptureDisable();
 uint8_t hal_adc_status();
+
+class HalADC {
+ public:
+  uint8_t Init(ADC_CHN_E ch, ADC_TIM_E tim, uint16_t period_us);
+  // return adc index
+  uint8_t Register(ADC_CHN_E ch);
+  // index is Register() return
+  uint16_t Read(uint8_t index);
+  uint16_t ReadNext(uint8_t index);
+  // Destroy a channel
+  void destroy(uint8_t index);
+  void enable();
+  void disable();
+ private:
+    ADC_TIM_E tim_ = ADC_TIM_INVALID;
+};
+
 #endif
 

@@ -1,6 +1,7 @@
 #include "hal_exti.h"
 #include "hal_gpio.h"
 #include "stdio.h"
+#include "src/HAL/std_library/inc/stm32f10x.h"
 
 EXTI_CB_F exti_cb[16] = {NULL};
 

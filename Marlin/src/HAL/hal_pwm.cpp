@@ -33,6 +33,14 @@ TIM5    0 没重映像			PA0   PA1  PA2   PA3
 static TIM_TypeDef * tim_table[] = {TIM1, TIM2, TIM3, TIM4, TIM5};
 static const uint32_t RCC_tim[] = {RCC_APB2Periph_TIM1, RCC_APB1Periph_TIM2, RCC_APB1Periph_TIM3, RCC_APB1Periph_TIM4, RCC_APB1Periph_TIM5};
 
+uint8_t pwm_tim_pins[][4] = {
+    {PA_8, PA_9, PA_10, PA_11},
+    {PA_0, PA_1, PA_2,  PA_3},
+    {PA_6, PA_7, PB_0,  PB_1},
+    {PB_6, PB_7, Pxx,   Pxx},
+    {PA_0, PA_1, PA_2,  PA_3},
+};
+
 const uint32_t pwm_remap[] = {
     GPIO_PartialRemap_TIM1,
     GPIO_PartialRemap1_TIM2,
@@ -140,4 +148,24 @@ void HAL_PwmSetPulse(PWM_TIM_CHN_E tim_chn, uint16_t pulse) {
     uint8_t tim = tim_chn / 4;
     uint8_t chn = tim_chn % 4;
     HAL_PwmSetPulse(tim, chn, pulse);
+}
+
+
+ErrCode HalPWM::Init(PWM_TIM_CHN_E ch, uint32_t freq, uint16_t period) {
+    uint8_t tim = ch / 4;
+    uint8_t chn = ch % 4;
+    if(tim > PWM_TIM4_FULL || chn > PWM_CH4)
+        return E_PARAM;
+    HalGPIO::StaticInit(pwm_tim_pins[tim][chn], GPIO_AF_PP);
+    HAL_PwnConfig(tim, chn, freq, period);
+    tim_ = tim;
+    ch_ = chn;
+    return E_SUCCESS;
+}
+
+ErrCode HalPWM::SetPulse(uint16_t pulse) {
+    if ((tim_ >= PWM_TIM_INVALID) || (ch_ >= PWN_CH_INVALID))
+        return E_INIT;
+    HAL_PwmSetPulse(tim_, ch_, pulse);
+    return E_SUCCESS;
 }

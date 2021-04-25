@@ -50,7 +50,7 @@ TIM_TypeDef * AdcTim = NULL;
 uint16_t adc_cache[ADC_CACHE_SIZE];
 uint32_t adc_cusum[ADC_MAX_DEV_COUNT];
 uint8_t ADC_NbrOfChannel = 0;
-uint8_t adc_status = 0;
+__IO uint8_t adc_status = 0;
 
 // ADC1 CH0-CH15        PA0 PA1 PA2 PA3 PA4 PA5 PA6 PA7 PB0 PB1 PC0 PC1 PC2 PC3 PC4 PC5
 const uint8_t adc_pin_map[] = {0,  1,  2,  3,  4,  5,  6,  7,  16, 17, 32, 33, 34, 35, 36, 37};
@@ -170,7 +170,6 @@ void HAL_adc_tim_init(uint8_t tim_num, uint32_t u32TimFrequency, uint16_t u16Per
     TIM_Cmd(AdcTim, ENABLE);
 }
 
-
 void HAL_adc_dma_init() {
     DMA_InitTypeDef DMA_InitStruct;
 
@@ -254,3 +253,40 @@ uint8_t HAL_adc_init(uint8_t pin, ADC_TIM_E tim, uint16_t period_us) {
 }
 
 
+uint8_t HalADC::Init(ADC_CHN_E ch, ADC_TIM_E tim, uint16_t period_us) {
+  tim_ = tim;
+  GpioInit(adc_pin_map[ch], GPIO_Mode_AIN);
+  return HAL_adc_init_chn(ch, tim, period_us);
+}
+
+uint8_t HalADC::Register(ADC_CHN_E ch) {
+  uint8_t ret_index = ADC_CH_INVALID;
+  if (ch < ADC_CH_INVALID){
+    ret_index = ADC_NbrOfChannel;
+    HAL_adc_init_reg(ch, tim_);
+  }
+  return ret_index;
+}
+
+uint16_t HalADC::Read(uint8_t index) {
+  return ADC_Get(index);
+}
+
+uint16_t HalADC::ReadNext(uint8_t index) {
+  adc_status = 0;
+  while (!adc_status);
+  return ADC_Get(index);
+}
+
+
+void HalADC::destroy(uint8_t index) {
+
+}
+
+void HalADC::enable() {
+
+}
+
+void disable() {
+
+}

@@ -26,7 +26,8 @@
 ntc3590温度-阻值对照表：http://www.thermistors.cn/news/287.html
 */
 #define TEMP_TABLE_LEN  (sizeof(temptable)/(sizeof(temptable[0])))
-#define OV(N) ((N) * (OVERSAMPLENR))
+// #define OV(N) ((N) * (OVERSAMPLENR))
+#define OV(N) (N)
 const int32_t temptable[][2] = {
   { OV(   4), 938 },
   { OV(  91), 300 },

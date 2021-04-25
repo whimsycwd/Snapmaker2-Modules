@@ -21,6 +21,7 @@
 #include "hal_RGB.h"
 #include "hal_gpio.h"
 #include "hal_exti.h"
+#include "src/HAL/std_library/inc/stm32f10x.h"
 
 static GPIO_TypeDef * rgb_port = NULL;
 static uint16_t rgb_pin;
@@ -60,7 +61,7 @@ static RGB_T *cur_rgb;
 static uint8_t cur_light_count = 0;
 
 void HAL_SetAllRGB(uint8_t pin, RGB_T *rgb, uint8_t light_count) {
-  rgb_port = GpioGetPort(pin);
+  rgb_port = (GPIO_TypeDef *)GpioGetPort(pin);
   rgb_pin = (1 << (pin % 16));
   cur_rgb = rgb;
   cur_light_count = light_count;

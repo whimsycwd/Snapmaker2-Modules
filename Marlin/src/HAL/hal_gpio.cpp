@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "hal_gpio.h"
+#include <src/HAL/std_library/inc/stm32f10x.h>
 
 const static GPIO_TypeDef* PORTs[] = {
   GPIOA,
@@ -44,11 +45,11 @@ void GpioRemap() {
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }
 
-void GpioInit(uint8_t Port, GPIOMode_TypeDef Mode) {
+void GpioInit(uint8_t Port, uint8_t Mode) {
   GPIO_InitTypeDef GPIO_InitStruct;
   
   RCC_APB2PeriphClockCmd(RCCTable[Port / 16], ENABLE);
-  GPIO_InitStruct.GPIO_Mode = Mode;
+  GPIO_InitStruct.GPIO_Mode = (GPIOMode_TypeDef)Mode;
   GPIO_InitStruct.GPIO_Pin = 1 << (Port % 16);
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init((GPIO_TypeDef*)PORTs[Port / 16], &GPIO_InitStruct);
@@ -71,6 +72,56 @@ uint8_t GpioRead(uint8_t Port) {
   return (pPort->IDR & (1 << Bits)) > 0;
 }
 
-GPIO_TypeDef * GpioGetPort(uint8_t pin) {
-  return (GPIO_TypeDef*)PORTs[pin / 16];
+uint32_t GpioGetPort(uint8_t pin) {
+  return (uint32_t)PORTs[pin / 16];
+}
+
+
+
+bool HalGPIO::Init(uint8_t pin, uint8_t mode) {
+  if (pin >= Pxx) {
+    init_ = false;
+    pin_ = Pxx;
+  } else {
+    if (mode > GPIO_AF_PP) {
+      mode = GPIO_OUT_OD;
+    }
+    GpioInit(pin, mode);
+    pin_ = pin;
+    init_ = true;
+  }
+  return init_;
+}
+
+bool HalGPIO::StaticInit(uint8_t pin, uint8_t mode) {
+  if (pin < Pxx) {
+    GpioInit(pin, mode);
+    return  true;
+  }
+  return false;
+}
+
+bool HalGPIO::Read() {
+  if (!init_) {
+    return 0;
+  }
+  return GpioRead(pin_);
+}
+
+void HalGPIO::Write(bool level) {
+  if (init_) {
+    GpioWrite(pin_, level);
+  }
+}
+
+uint32_t HalGPIO::PinToPort(uint8_t pin) {
+  return GpioGetPort(pin);
+}
+
+uint8_t HalGPIO::PinToNum(uint8_t pin) {
+  return pin % 16;
+}
+
+void HalGPIO::DisableDebugIO() {
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }

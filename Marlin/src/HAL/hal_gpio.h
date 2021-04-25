@@ -20,11 +20,65 @@
  */
 #ifndef GPIO_H
 #define GPIO_H
-#include "std_library/inc/stm32f10x.h"
+
+#include "../common/common.h"
 
 void GpioRemap(void);
-void GpioInit(uint8_t Port, GPIOMode_TypeDef Mode);
+void GpioInit(uint8_t Port, uint8_t Mode);
 void GpioWrite(uint8_t Port, uint8_t IOLevel);
 uint8_t GpioRead(uint8_t Port);
-GPIO_TypeDef * GpioGetPort(uint8_t pin);
+uint32_t GpioGetPort(uint8_t pin);
+
+
+enum {
+  PA_0, PA_1, PA_2, PA_3, PA_4, PA_5, PA_6, PA_7, PA_8, PA_9, PA_10, PA_11, PA_12, PA_13,PA_14,PA_15,
+	PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7,
+  Pxx,
+};
+
+typedef struct {
+  uint8_t pin;
+  uint8_t mode;
+}GPIO_Read_t;
+
+typedef struct {
+  uint8_t pin;
+  uint8_t mode;
+  uint8_t level;
+  uint8_t wait_ms;
+  uint8_t is_inversion;
+}GPIO_Write_t;
+
+typedef enum {
+  GPIO_AIN = 0x0,
+  GPIO_IN_FLOATING = 0x04,
+  GPIO_IPD = 0x28,
+  GPIO_IPU = 0x48,
+  GPIO_OUT_OD = 0x14,
+  GPIO_OUT_PP = 0x10,
+  GPIO_AF_OD = 0x1C,
+  GPIO_AF_PP = 0x18
+}GPIO_MODE_E;
+
+class HalGPIO {
+ public:
+  HalGPIO(uint8_t pin, uint8_t mode=GPIO_OUT_PP) {Init(pin, mode);};
+  bool Init(uint8_t pin, uint8_t mode);
+  static bool StaticInit(uint8_t pin, uint8_t mode);
+  bool Read();
+  void Write(bool level);
+  void High() {Write(1);}
+  void Low() {Write(0);}
+  void enable() {}
+  void disable() {}
+  static void DisableDebugIO();
+
+  static uint32_t PinToPort(uint8_t pin);  // PA8 -> GPIOA
+  static uint8_t PinToNum(uint8_t pin);  // PA8 -> 8
+
+ private:
+  uint8_t init_;
+  uint8_t mode_;
+  uint8_t pin_;
+};
 #endif
