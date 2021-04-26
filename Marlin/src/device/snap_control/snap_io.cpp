@@ -1,6 +1,7 @@
 #include "snap_io.h"
+#include "snap_time.h"
 
-static const uint8_t pin_remep[] = {
+const uint8_t snap_io_remap[] = {
   PA_0,  // IO0 
   PA_1,  // IO1 
   PA_2,  // IO2 
@@ -21,10 +22,18 @@ static const uint8_t pin_remep[] = {
   Pxx,   // IOxx
 };
 
+SnapIO_Status_t snap_io_satatus[IOxx] = {0};
+static uint32_t status_renew_time = 0;
+
+
+void SnapIO::Init(SNAP_PIN_REMEP io, uint8_t mode) {
+  HalGPIO::StaticInit(snap_io_remap[io], mode);
+}
+
 ErrCode SnapIO::Write(SNAP_PIN_REMEP io, bool level, uint8_t mode) {
   if (io >= IOxx) 
     return E_PARAM;
-  HalGPIO hal_io(pin_remep[io], mode);
+  HalGPIO hal_io(snap_io_remap[io], mode);
   hal_io.Write(level);
   return E_SUCCESS;
 }
@@ -32,7 +41,7 @@ ErrCode SnapIO::Write(SNAP_PIN_REMEP io, bool level, uint8_t mode) {
 ErrCode SnapIO::Read(SNAP_PIN_REMEP io, bool &out, uint8_t mode) {
   if (io >= IOxx) 
     return E_PARAM;
-  HalGPIO hal_io(pin_remep[io], mode);
+  HalGPIO hal_io(snap_io_remap[io], mode);
   out = hal_io.Read();
   return E_SUCCESS;
 }
@@ -47,4 +56,32 @@ ErrCode SnapIO::Pwm(SNAP_PIN_REMEP io, uint32_t period_ms, uint8_t duty_cycle, u
 
 ErrCode SnapIO::Reset(SNAP_PIN_REMEP io, uint32_t ms, uint8_t mode) {
   return E_SUCCESS;
+}
+
+void SnapIO::Loop() {
+  SnapIO_Status_t * p_status;
+  if (status_renew_time > SnapTimer::Millis()) {
+    return ;
+  }
+  status_renew_time = SnapTimer::Millis() + 2;
+  for (uint8_t i = 0; i < IOxx; i++) {
+    p_status = &snap_io_satatus[i];
+    if (p_status->is_port) {
+      bool status  = 0;
+      Read((SNAP_PIN_REMEP)i, status, p_status->mode);
+      p_status->status <<= 1;
+      p_status->status |= status;
+      if ((p_status->status == SNAP_IO_STATUS_MASK) || (p_status->status == 0)) {
+        if (p_status->status != p_status->last_status) {
+          p_status->last_status = p_status->status;
+          SnapReturnIO_t ret;
+          ret.err_code = E_SUCCESS;
+          ret.io = i;
+          ret.type = IO_CONTROL_READ;
+          ret.value = p_status->status;
+          ShowResult(&ret);
+        }
+      }
+    }
+  }
 }

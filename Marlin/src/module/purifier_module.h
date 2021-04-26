@@ -197,7 +197,6 @@ class PurifierModule : public ModuleBase {
   uint8_t fan_gears_ = 0;
   uint8_t cur_lifetime = LIFETIME_NORMAL;
   uint8_t last_lifetime[LIFETIME_STABLE_TIMES] = {255}; 
-  uint16_t elec_cache[LIFETIME_STABLE_TIMES] = {0, 0, 0, 0, 0}; 
   PURIFIER_WORK_STATUS_E fan_state_ = FAN_STA_IDLE;
   uint32_t fan_start_time_ = 0;
   uint8_t err_ = 0;

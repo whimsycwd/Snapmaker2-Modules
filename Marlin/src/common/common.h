@@ -25,6 +25,8 @@ typedef enum {
 #define IS_LETTER(ch) ((((ch) <= 'z') && ((ch) >= 'a')) || (((ch) <= 'Z') && ((ch) >= 'A')))
 uint8_t ToLower(uint8_t c);
 uint16_t ToLowers(uint8_t *s, uint16_t max_len=STR_MAX_LEN);
+uint8_t ToCapital(uint8_t c);
+uint16_t ToCapitals(uint8_t *s, uint16_t max_len=STR_MAX_LEN);
 int16_t FindCharIndex(uint8_t * str, uint8_t ch);
 bool IsBeginWith(uint8_t * str,uint8_t *begin);
 uint8_t StringToInt(uint8_t *str, int32_t &out);

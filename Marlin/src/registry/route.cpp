@@ -80,6 +80,10 @@ const uint16_t fan_func_list_[] = {
   FUNC_SET_FAN_MODULE,
 };
 
+const uint16_t snap_star_func_list[] = {
+  FUNC_SNAP_STAR_CORTROL,
+};
+
 Route routeInstance;
 void Route::Init() {
   uint32_t moduleType = registryInstance.module();
@@ -141,6 +145,12 @@ void Route::Init() {
       module_ = new RotateModule;
       module_->Init();
       break;
+    case MODULE_SNAP_STAR:
+      module_ = new SnapStar;
+      module_->Init();
+      FUNC_LIST_INIT(snap_star_func_list);
+      break;
+    
   }
 }
 

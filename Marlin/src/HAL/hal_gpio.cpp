@@ -41,6 +41,17 @@ const static uint32_t RCCTable[] = {
   RCC_APB2Periph_GPIOG
 };
 
+static uint8_t gpio_module_table[] = {
+  GPIO_Mode_AIN,
+  GPIO_Mode_IN_FLOATING ,
+  GPIO_Mode_IPD ,
+  GPIO_Mode_IPU ,
+  GPIO_Mode_Out_OD ,
+  GPIO_Mode_Out_PP ,
+  GPIO_Mode_AF_OD ,
+  GPIO_Mode_AF_PP
+};
+
 void GpioRemap() {
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }
@@ -49,7 +60,7 @@ void GpioInit(uint8_t Port, uint8_t Mode) {
   GPIO_InitTypeDef GPIO_InitStruct;
   
   RCC_APB2PeriphClockCmd(RCCTable[Port / 16], ENABLE);
-  GPIO_InitStruct.GPIO_Mode = (GPIOMode_TypeDef)Mode;
+  GPIO_InitStruct.GPIO_Mode = (GPIOMode_TypeDef)gpio_module_table[Mode];
   GPIO_InitStruct.GPIO_Pin = 1 << (Port % 16);
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init((GPIO_TypeDef*)PORTs[Port / 16], &GPIO_InitStruct);
@@ -83,9 +94,6 @@ bool HalGPIO::Init(uint8_t pin, uint8_t mode) {
     init_ = false;
     pin_ = Pxx;
   } else {
-    if (mode > GPIO_AF_PP) {
-      mode = GPIO_OUT_OD;
-    }
     GpioInit(pin, mode);
     pin_ = pin;
     init_ = true;

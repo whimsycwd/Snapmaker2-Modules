@@ -50,14 +50,14 @@ typedef struct {
 }GPIO_Write_t;
 
 typedef enum {
-  GPIO_AIN = 0x0,
-  GPIO_IN_FLOATING = 0x04,
-  GPIO_IPD = 0x28,
-  GPIO_IPU = 0x48,
-  GPIO_OUT_OD = 0x14,
-  GPIO_OUT_PP = 0x10,
-  GPIO_AF_OD = 0x1C,
-  GPIO_AF_PP = 0x18
+  GPIO_AIN,
+  GPIO_IN_FLOATING,
+  GPIO_IPD,
+  GPIO_IPU,
+  GPIO_OUT_OD,
+  GPIO_OUT_PP,
+  GPIO_AF_OD,
+  GPIO_AF_PP,
 }GPIO_MODE_E;
 
 class HalGPIO {

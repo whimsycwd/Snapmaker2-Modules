@@ -70,6 +70,8 @@ uint8_t hal_adc_status();
 
 class HalADC {
  public:
+ uint8_t Init();
+  uint16_t Read(ADC_CHN_E ch);
   uint8_t Init(ADC_CHN_E ch, ADC_TIM_E tim, uint16_t period_us);
   // return adc index
   uint8_t Register(ADC_CHN_E ch);

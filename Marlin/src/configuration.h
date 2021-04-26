@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 #define APP_VERSIONS "v1.10.1-test2"
-#define FLASH_BASE 0x8000000
+#define FLASH_CODE_BASE 0x8000000
 
 #define FLASH_PAGE_COUNT (128)
 #define FLASH_PAGE_SIZE  (1024)
@@ -35,7 +35,7 @@
 #define PUBLIC_PARA_SIZE (1  * 1024)
 #define APP_PARA_SIZE (1  * 1024)
 
-#define FLASH_BOOT_CODE   (FLASH_BASE)
+#define FLASH_BOOT_CODE   (FLASH_CODE_BASE)
 #define FLASH_MODULE_PARA   (FLASH_BOOT_CODE + BOOT_CODE_SIZE)  // readonly
 #define FLASH_PUBLIC_PARA (FLASH_MODULE_PARA + MODULE_PARA_SIZE)  // read & write
 #define FLASH_APP_PARA    (FLASH_PUBLIC_PARA + PUBLIC_PARA_SIZE)  // read & write
@@ -77,6 +77,7 @@ typedef struct {
     uint8_t purifier_lifetime;
     uint8_t purifier_forced_run;
     uint8_t purifier_fan_gears;
+    uint8_t index;
 } AppParmInfo;
 
 typedef enum {
@@ -93,6 +94,7 @@ typedef enum {
   MODULE_PRINT_V_SM1       = 10, // 10
   MODULE_FAN               = 11, // 11
   MODULE_LINEAR_TMC        = 12, // 12
+  MODULE_SNAP_STAR         = 15, // 15
 } MODULE_TYPE;
 
 
@@ -152,6 +154,7 @@ typedef enum {
     FUNC_TMC_PUBLISH           ,  // 22
     FUNC_SET_PURIFIER          ,  // 23
     FUNC_REPORT_PURIFIER       ,  // 24
+    FUNC_SNAP_STAR_CORTROL     ,
 } FUNC_ID;
 
 typedef enum {

@@ -29,6 +29,7 @@
 #include "src/HAL/hal_reset.h"
 #include "src/HAL/hal_flash.h"
 #include "src/module/laser_head.h"
+#include "../device/snap_control.h"
 #include <wirish_time.h>
 
 void Registry::Heartbeat() {
@@ -267,14 +268,16 @@ void Registry::ReportModuleIndex(uint8_t * data) {
   uint8_t   cache[8];
   uint8_t   index  = 0;
   cache[index++] = CMD_S_CONFIG_REACK;
-  cache[index++] = moduleIndex.SetModuleIndex(data[0]);
   if ((module_id_ == MODULE_LINEAR) || (module_id_ == MODULE_LINEAR_TMC)) {
+    cache[index++] = moduleIndex.SetModuleIndex(data[0]);
     uint16_t u16AxisLen = GetAxisModuleLen();
     uint8_t  u8AxisLimitSite = GetAxisLimitSite();
     cache[index++] = u16AxisLen >> 8;
     cache[index++] = (u16AxisLen & 0xff);
     cache[index++] = u8AxisLimitSite;
     // u8Cache[u8Index++] = Switch_TemporaryGetStatu(dMsgIdAndFuncITable.stMsg2Func[0].u8ParmIndex);
+  } else {
+    control_.index.Read(cache[index++]);
   }
   longpackInstance.sendLongpack(cache, index);
 }

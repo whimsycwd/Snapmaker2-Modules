@@ -16,6 +16,21 @@ uint16_t ToLowers(uint8_t *s, uint16_t max_len) {
   return i;
 }
 
+uint8_t ToCapital(uint8_t c) {
+  if (c <= 'z' && c >=  'a') {
+    c = c - 'a' + 'A';
+  }
+  return c;
+}
+
+uint16_t ToCapitals(uint8_t *s, uint16_t max_len) {
+  uint16_t i = 0;
+  for ( ; s[i] != '\0' && i < max_len; i++) {
+    s[i] = ToCapital(s[i]);
+  }
+  return i;
+}
+
 int16_t FindCharIndex(uint8_t * str, uint8_t ch) {
   int16_t ret  = -1;
   if (str != NULL) {

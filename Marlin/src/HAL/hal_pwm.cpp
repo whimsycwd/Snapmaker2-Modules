@@ -122,6 +122,60 @@ void HAL_PwnConfig(uint8_t tim, uint8_t chn, uint32_t freq, uint16_t period) {
     TIM_Cmd(tim_table[tim_num], ENABLE);
 }
 
+void HAL_PwnConfig1(uint8_t tim, uint8_t chn, uint16_t freq, uint16_t period) {
+    TIM_TimeBaseInitTypeDef tim_TimeBaseInitTypeDef;
+    TIM_OCInitTypeDef Tim_OCInitTypeDef;
+    TIM_BDTRInitTypeDef TIM_BDTRInitStruct;
+    uint8_t tim_num = (PWM_TIM_E)TO_TIM(tim);
+
+    assert_tim(tim, chn);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+
+    if (tim_num == PWM_TIM1)
+        RCC_APB2PeriphClockCmd(RCC_tim[tim_num], ENABLE);
+    else
+        RCC_APB1PeriphClockCmd(RCC_tim[tim_num], ENABLE);
+
+    tim_TimeBaseInitTypeDef.TIM_ClockDivision = TIM_CKD_DIV1;
+    tim_TimeBaseInitTypeDef.TIM_CounterMode = TIM_CounterMode_Up;
+    tim_TimeBaseInitTypeDef.TIM_Period = period - 1;
+    tim_TimeBaseInitTypeDef.TIM_Prescaler = freq - 1;
+    tim_TimeBaseInitTypeDef.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(tim_table[tim_num], &tim_TimeBaseInitTypeDef);
+
+    TIM_OCStructInit(&Tim_OCInitTypeDef);
+    Tim_OCInitTypeDef.TIM_OCMode = TIM_OCMode_PWM1;
+    Tim_OCInitTypeDef.TIM_Pulse = 0;
+    if (tim == PWM_TIM1_PARTIAL) {
+        Tim_OCInitTypeDef.TIM_OutputNState 	= TIM_OutputNState_Enable;
+        Tim_OCInitTypeDef.TIM_OCNPolarity 	= TIM_OCNPolarity_High;
+        Tim_OCInitTypeDef.TIM_OCIdleState 	= TIM_OCIdleState_Reset;     
+        Tim_OCInitTypeDef.TIM_OCNIdleState 	= TIM_OCNIdleState_Reset;
+        Tim_OCInitTypeDef.TIM_OutputState = TIM_OutputState_Disable;
+        Tim_OCInitTypeDef.TIM_OCPolarity = TIM_OCPolarity_Low;
+    } else {
+        Tim_OCInitTypeDef.TIM_OutputState = TIM_OutputState_Enable;
+        Tim_OCInitTypeDef.TIM_OCPolarity = TIM_OCPolarity_High;
+    }
+
+    PwmOcInit(tim_table[tim_num], chn, &Tim_OCInitTypeDef);
+    TIM_ARRPreloadConfig(tim_table[tim_num], ENABLE);
+    if (tim_num == PWM_TIM1) {
+        TIM_BDTRStructInit(&TIM_BDTRInitStruct);
+        TIM_BDTRInitStruct.TIM_OSSRState = ENABLE;
+        TIM_BDTRInitStruct.TIM_OSSIState = ENABLE;
+        TIM_BDTRInitStruct.TIM_LOCKLevel = TIM_LOCKLevel_OFF;
+        TIM_BDTRInitStruct.TIM_DeadTime = 0;
+        TIM_BDTRInitStruct.TIM_Break = TIM_Break_Disable;
+        TIM_BDTRInitStruct.TIM_AutomaticOutput = TIM_AutomaticOutput_Enable;
+        TIM_BDTRConfig(TIM1, &TIM_BDTRInitStruct);
+        TIM_CtrlPWMOutputs(TIM1, ENABLE);
+    }
+    TIM_Cmd(tim_table[tim_num], ENABLE);
+}
+
 void HAL_PwmInit(PWM_TIM_CHN_E tim_chn, uint8_t pin, uint32_t freq, uint16_t period) {
     uint8_t tim = tim_chn / 4;
     uint8_t chn = tim_chn % 4;
@@ -148,6 +202,19 @@ void HAL_PwmSetPulse(PWM_TIM_CHN_E tim_chn, uint16_t pulse) {
     uint8_t tim = tim_chn / 4;
     uint8_t chn = tim_chn % 4;
     HAL_PwmSetPulse(tim, chn, pulse);
+}
+
+ErrCode HalPWM::InitFromDivider(PWM_TIM_CHN_E ch, uint16_t freq_div, uint16_t period) {
+    
+    uint8_t tim = ch / 4;
+    uint8_t chn = ch % 4;
+    if(tim > PWM_TIM4_FULL || chn > PWM_CH4)
+        return E_PARAM;
+    HalGPIO::StaticInit(pwm_tim_pins[tim][chn], GPIO_AF_PP);
+    HAL_PwnConfig1(tim, chn, freq_div, period);
+    tim_ = tim;
+    ch_ = chn;
+    return E_SUCCESS;
 }
 
 

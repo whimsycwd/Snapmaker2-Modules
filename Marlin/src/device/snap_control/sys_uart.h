@@ -50,20 +50,16 @@ class SysUart {
     index = 0;
   }
 
-  int32_t Puts(uint8_t *data, uint16_t len) {
-    return port_.Puts(data, len);
+  int32_t Write(void *data, uint16_t len) {
+    return port_.Puts((uint8_t *)data, len);
   }
 
-  int32_t Puts(uint8_t *data) {
-    return port_.Puts(data, strlen((char *)data));
+  int32_t Puts(const void *str) {
+    return port_.Puts((uint8_t *)str, strlen((char *)str));
   }
-
-  int32_t Puts(const uint8_t *data) {
-    return port_.Puts((uint8_t *)data, strlen((char *)data));
-  }
-
-  int32_t Puts(const char *data) {
-    return port_.Puts((uint8_t *)data, strlen((char *)data));
+  void Putsln(void *str) {
+    Puts(str);
+    Putc('\n');
   }
 
   ErrCode Putc(uint8_t ch) {
@@ -101,5 +97,7 @@ class SysUart {
   bool is_end_ = false;
   HalUart port_;
 };
+
+extern SysUart sys_uart;
 
 #endif

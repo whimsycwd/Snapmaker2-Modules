@@ -117,6 +117,7 @@ class HalPWM {
 		Init(ch, freq, period);
 	}
 	ErrCode Init(PWM_TIM_CHN_E ch, uint32_t freq, uint16_t period);
+	ErrCode InitFromDivider(PWM_TIM_CHN_E ch, uint16_t freq_div, uint16_t period);
 	ErrCode SetPulse(uint16_t pulse);
  private:
 	uint8_t tim_ = PWM_TIM_INVALID;
