@@ -64,7 +64,7 @@
 #define WHITE_WATERFALL_LIGHT {255, 255, 255}
 #define YELLOW_LIGHT {255, 189, 19}
 #define RED_LIGHT {255, 0, 0}
-#define BLUE_LIGHT {255, 0, 0}
+#define BLUE_LIGHT {0, 0, 255}
 #define ORANGE_LIGHT {226, 97, 14}
 #define BLACK_LIGHT {0, 0, 0}
 
@@ -197,6 +197,7 @@ class PurifierModule : public ModuleBase {
   uint8_t fan_gears_ = 0;
   uint8_t cur_lifetime = LIFETIME_NORMAL;
   uint8_t last_lifetime[LIFETIME_STABLE_TIMES] = {255}; 
+  uint16_t elec_cache[LIFETIME_STABLE_TIMES] = {0, 0, 0, 0, 0}; 
   PURIFIER_WORK_STATUS_E fan_state_ = FAN_STA_IDLE;
   uint32_t fan_start_time_ = 0;
   uint8_t err_ = 0;
