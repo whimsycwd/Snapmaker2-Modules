@@ -438,7 +438,7 @@ void PurifierModule::ExtendPowerErrEvent(uint16_t power) {
   // a delay is needed to determine if the voltage is abnormal
   static uint32_t err_time = 0;
   if (sys_status_ != STA_POWER_OFF && (!IS_ERR(ERR_EXTEND_POWER))) {
-    err_time = millis() + 5000;
+    err_time = millis() + 10000;
   }
   if (err_time > millis() || IS_POWER_OFF(power)) {
     LightCtrl(LT_POWER_OFF);
