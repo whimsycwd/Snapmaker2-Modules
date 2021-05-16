@@ -125,8 +125,11 @@ ErrCode SnapStarParse::ParamAndExecute(uint8_t *cmd, SNAP_CMD_TYPE_E cmd_type, S
     case API_TEMP:
       // ret = ParseTemperature(cmd, sub_num);
       break;
-     case API_GCODE:
+    case API_GCODE:
       InitVariable(gcode);
+      break;
+    case API_MPU:
+      InitVariable(mpu);
       break;
     case API_INVALID:
       break;

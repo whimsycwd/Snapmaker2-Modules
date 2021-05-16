@@ -9,6 +9,7 @@
 #include "./snap_control/snap_uart.h"
 #include "./snap_control/snap_time.h"
 #include "./snap_control/snap_gcode.h"
+#include "./snap_control/snap_mpu.h"
 
 #pragma pack(1)
 
@@ -25,6 +26,7 @@ typedef struct {
     SnapParamIndex_t index;
     SnapParamADC_t adc;
     SnapParamGcode_t gcode;
+    SnapParamMPU_t mpu;
   };
 } SnapApiParam_t;
 
@@ -35,6 +37,7 @@ typedef struct {
     SnapReturnIndex_t index;
     SnapReturnADC_t adc;
     SnapReturnGcode_t gcode;
+    SnapReturnMPU_t mpu;
   };
 } SnapApiRetuen_t;
 
@@ -58,6 +61,7 @@ class SnapControl {
   SnapUart uart;
   SnapTimer timer;
   SnapGcode gcode;
+  SnapMPU mpu;
 };
 
 extern SnapControl control_;

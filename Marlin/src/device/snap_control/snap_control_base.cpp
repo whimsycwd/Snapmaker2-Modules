@@ -3,13 +3,14 @@
 static uint8_t snap_send_buf[PUBLIC_BUF_SIZE];
 
 const uint8_t name_to_api_table[][8] = {
-  "index",// API_INDEX
-  "io",   // API_IO
-  "adc",  // API_ADC
-  "uart", // API_UART
-  "pwm",  // API_PWM
-  "temp", // API_PWM
-  "gcode", // API_GODE
+  "index",   // API_INDEX
+  "io",      // API_IO
+  "adc",     // API_ADC
+  "uart",    // API_UART
+  "pwm",     // API_PWM
+  "temp",    // API_PWM
+  "gcode",   // API_GODE
+  "mpu",     // API_MPU
   {"invalid"},   // API_INVALID
 };
 

@@ -63,7 +63,11 @@ typedef enum {
 class HalGPIO {
  public:
   HalGPIO(uint8_t pin, uint8_t mode=GPIO_OUT_PP) {Init(pin, mode);};
+  HalGPIO() {pin_ = Pxx;}
   bool Init(uint8_t pin, uint8_t mode);
+  void SetMode(uint8_t mode) {
+    Init(pin_, mode);
+  }
   static bool StaticInit(uint8_t pin, uint8_t mode);
   bool Read();
   void Write(bool level);

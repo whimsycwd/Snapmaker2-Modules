@@ -56,6 +56,7 @@ typedef enum : uint8_t {
   API_PWM,
   API_TEMP,
   API_GCODE,
+  API_MPU,
   API_INVALID
 }API_NUM_E;
 
