@@ -10,7 +10,7 @@ void SnapTimer::DelayMs(uint32_t ms) {
     registryInstance.ServerHandler();
     registryInstance.SystemHandler();
     sys_uart.Loop();
-    SnapStarParse::loop();
+    snap_parse.loop();
   }
 }
 

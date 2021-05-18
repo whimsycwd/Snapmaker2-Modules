@@ -159,8 +159,15 @@ ErrCode SnapStarParse::ParamAndExecute(uint8_t *cmd, SNAP_CMD_TYPE_E cmd_type, S
 void SnapStarParse::loop() {
   uint16_t cmd_len = 0;
   uint8_t * cmd = NULL;
+  if (lock_) {
+    return;
+  }
   if ((cmd = sys_uart.CmdPop(cmd_len)) != NULL) {
+    lock_ = true;
     sys_uart.CleanCmd();
-    SnapStarParse::ParamAndExecute(cmd, SNAP_DATA_STRING_MODE, SNAP_CMD_SOUREC_UART);
+    ParamAndExecute(cmd, SNAP_DATA_STRING_MODE, SNAP_CMD_SOUREC_UART);
+    lock_ = false;
   }
 }
+
+SnapStarParse snap_parse;

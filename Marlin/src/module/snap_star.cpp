@@ -26,9 +26,9 @@ bool RecvDataCheck() {
 void RecvDataExecute() {
   recv_data.data[recv_data.len++] = 0;
   if (recv_data.mode == SNAP_DATA_STRING_MODE) {
-    SnapStarParse::ParamAndExecute(recv_data.data, SNAP_DATA_STRING_MODE, SNAP_CMD_SOUREC_CAN);
+    snap_parse.ParamAndExecute(recv_data.data, SNAP_DATA_STRING_MODE, SNAP_CMD_SOUREC_CAN);
   } else if (recv_data.mode == SNAP_DATA_API_MODE) {
-    SnapStarParse::ParamAndExecute(recv_data.data, SNAP_DATA_API_MODE, SNAP_CMD_SOUREC_CAN);
+    snap_parse.ParamAndExecute(recv_data.data, SNAP_DATA_API_MODE, SNAP_CMD_SOUREC_CAN);
   }
 }
 
@@ -78,6 +78,6 @@ void SnapStar::HandModule(uint16_t func_id, uint8_t * data, uint8_t data_len) {
 
 void SnapStar::Loop() {
   control_.Loop();
-  SnapStarParse::loop();
+  snap_parse.loop();
   user_.loop();
 }

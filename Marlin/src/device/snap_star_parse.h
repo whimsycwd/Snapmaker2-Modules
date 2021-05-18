@@ -5,6 +5,11 @@
 
 class SnapStarParse {
  public:
-  static ErrCode ParamAndExecute(uint8_t *cmd, SNAP_CMD_TYPE_E cmd_type, SNAP_CMD_SOUREC_E source);
-  static void loop();
+  ErrCode ParamAndExecute(uint8_t *cmd, SNAP_CMD_TYPE_E cmd_type, SNAP_CMD_SOUREC_E source);
+  void loop();
+
+ private:
+  bool lock_ = false;
 };
+
+extern SnapStarParse snap_parse;
