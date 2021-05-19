@@ -45,3 +45,25 @@ ErrCode SnapMPU::Read(ValueOfMPU_t &value) {
   value = *((ValueOfMPU_t *)xyz);
   return E_SUCCESS;
 }
+
+ErrCode SnapMPU::ReadGyroscope(ValueOfMPU_t &value) {
+  short gx, gy, gz;
+  if (MPU_Get_Gyroscope(&gx, &gy, &gz) == E_SUCCESS) {
+    value.x = gx;
+    value.y = gy;
+    value.z = gz;
+    return E_SUCCESS;
+  }
+  return E_FAILURE;
+}
+
+ErrCode SnapMPU::RreadAcceler(ValueOfMPU_t &value) {
+  short ax, ay, az;
+  if (MPU_Get_Accelerometer(&ax, &ay, &az) == E_SUCCESS) {
+    value.x = ax;
+    value.y = ay;
+    value.z = az;
+    return E_SUCCESS;
+  }
+  return E_FAILURE;
+}

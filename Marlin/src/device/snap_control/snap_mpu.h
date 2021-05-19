@@ -9,11 +9,13 @@
 typedef enum {
   MPU_CONTROL_INIT,
   MPU_CONTROL_ZERO,
-  MPU_CONTROL_READ,
+  MPU_CONTROL_READ_EULER,
+  MPU_CONTROL_READ_GYRO,
+  MPU_CONTROL_READ_ACCE,
 } MPU_CONTROL_TYPE_E;
 
 typedef struct {
-  float x, y, z;
+  float  y, x,z;
 } ValueOfMPU_t;
 
 typedef struct {
@@ -34,6 +36,8 @@ class SnapMPU : public SnapControlBaes {
     SnapMPU() {};
     ErrCode Init(uint8_t sda_io, uint8_t scl_io, uint8_t addr=MPU_DEFAULT_ADDR);
     ErrCode Read(ValueOfMPU_t &value);
+    ErrCode ReadGyroscope(ValueOfMPU_t &value);
+    ErrCode RreadAcceler(ValueOfMPU_t &value);
     ErrCode Zero();
     ErrCode ApiControl(void *api_param, void * snap_return) {
       return E_FAILURE;
@@ -43,6 +47,8 @@ class SnapMPU : public SnapControlBaes {
       SnapReturnMPU_t *ret = (SnapReturnMPU_t *)snap_return;
       if (!snap_return)
         return E_FAILURE;
+
+      ret->err_code = E_FAILURE;
 
       if (param.write_index) {
         uint8_t i = param.write_index;
@@ -58,8 +64,36 @@ class SnapMPU : public SnapControlBaes {
           ret->err_code = E_FAILURE;
         }
       } else{
-        ret->type = MPU_CONTROL_READ;
-        ret->err_code = Read(ret->value);
+        ret->type = MPU_CONTROL_READ_EULER;
+        if ((param.count) == 1 && (param.param_type[0] == PARAM_STRING)) {
+          switch (param.value[0].s[0]) {
+          case 'e':
+            ret->type = MPU_CONTROL_READ_EULER;
+            break;
+          case 'a':
+            ret->type = MPU_CONTROL_READ_ACCE;
+            break;
+          case 'g':
+            ret->type = MPU_CONTROL_READ_GYRO;
+            break;         
+          default:
+            break;
+          }
+        }
+        switch (ret->type) {
+          case MPU_CONTROL_READ_EULER:
+            ret->err_code = Read(ret->value);
+            break;
+          case MPU_CONTROL_READ_ACCE:
+            ret->err_code = RreadAcceler(ret->value);
+            break;
+          case MPU_CONTROL_READ_GYRO:
+            ret->err_code = ReadGyroscope(ret->value);
+            break;
+          default:
+            ret->err_code = E_FAILURE;
+            break;
+        }
       }
       return E_SUCCESS;
     }
@@ -70,18 +104,24 @@ class SnapMPU : public SnapControlBaes {
     void ShowResult(void * snap_return) {
       SnapReturnMPU_t *ret = (SnapReturnMPU_t *)snap_return;
       sys_uart.Puts("mpu");
+      switch (ret->type) {
+        case MPU_CONTROL_ZERO:
+          sys_uart.Puts(" zero ");
+          break;
+        case MPU_CONTROL_INIT:
+          sys_uart.Puts(" init ");
+          break;
+        case MPU_CONTROL_READ_ACCE:
+          sys_uart.Puts(" read acc ");
+          break;
+        case MPU_CONTROL_READ_GYRO:
+          sys_uart.Puts(" read gyro ");
+          break;
+        case MPU_CONTROL_READ_EULER:
+          sys_uart.Puts(" read eluer ");
+          break;
+      }
       if (ret->err_code != E_SUCCESS) {
-        switch (ret->type) {
-          case MPU_CONTROL_ZERO:
-            sys_uart.Puts(" zero ");
-            break;
-          case MPU_CONTROL_INIT:
-            sys_uart.Puts(" init ");
-            break;
-          case MPU_CONTROL_READ:
-            sys_uart.Puts(" read ");
-            break;
-        }
         sys_uart.Puts("fail");
       } else {
         switch (ret->type) {
@@ -89,12 +129,14 @@ class SnapMPU : public SnapControlBaes {
           case MPU_CONTROL_INIT:
             sys_uart.Puts(":ok");
             break;
-          case MPU_CONTROL_READ:
-            sys_uart.Puts(" x:  ");
+          case MPU_CONTROL_READ_EULER:
+          case MPU_CONTROL_READ_ACCE:
+          case MPU_CONTROL_READ_GYRO:
+            sys_uart.Puts(" x:");
             sys_uart.PutFloat(ret->value.x);
-            sys_uart.Puts(" y:  ");
+            sys_uart.Puts(" y:");
             sys_uart.PutFloat(ret->value.y);
-            sys_uart.Puts(" z:  ");
+            sys_uart.Puts(" z:");
             sys_uart.PutFloat(ret->value.z);
             break;
         }
@@ -106,6 +148,7 @@ class SnapMPU : public SnapControlBaes {
     uint8_t scl_pin_;
     bool inited_;
     Quaternion init_q_;
+    Quaternion last_q_;
 };
 
 #endif
