@@ -11,6 +11,7 @@ const uint8_t name_to_api_table[][8] = {
   "temp",    // API_PWM
   "gcode",   // API_GODE
   "mpu",     // API_MPU
+  "rgb",     // API_RGB
   {"invalid"},   // API_INVALID
 };
 

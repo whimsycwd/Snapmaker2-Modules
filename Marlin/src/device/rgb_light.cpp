@@ -61,6 +61,9 @@ void RGBLight::Init(uint8_t pin, uint8_t light_count, SOFT_EXTI_LINE_E exti) {
   RGB_T default_color = {0, 0, 0};
   light_count_ = light_count;
   light_pin_ = pin;
+  if (light_list_) {
+    delete light_list_;
+  }
   light_list_ = new RGB_T[light_count_];
   HAL_RGBInit(light_pin_, exti);
   FullColor(default_color);

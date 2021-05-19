@@ -53,7 +53,7 @@ class RGBLight {
  private:
   uint8_t light_count_ = 0;
   uint8_t light_pin_;
-  RGB_T * light_list_;
+  RGB_T * light_list_ = NULL;
   uint32_t execute_time_ = 0;
   float one_step_[3];
   uint32_t total_step_= 0;

@@ -10,6 +10,7 @@
 #include "./snap_control/snap_time.h"
 #include "./snap_control/snap_gcode.h"
 #include "./snap_control/snap_mpu.h"
+#include "./snap_control/snap_rgb.h"
 
 #pragma pack(1)
 
@@ -27,6 +28,7 @@ typedef struct {
     SnapParamADC_t adc;
     SnapParamGcode_t gcode;
     SnapParamMPU_t mpu;
+    SnapParamRGB_t rgb;
   };
 } SnapApiParam_t;
 
@@ -38,6 +40,7 @@ typedef struct {
     SnapReturnADC_t adc;
     SnapReturnGcode_t gcode;
     SnapReturnMPU_t mpu;
+    SnapReturnRGB_t rgb;
   };
 } SnapApiRetuen_t;
 
@@ -48,6 +51,7 @@ class SnapControl {
   void Loop() {
     sys_uart.Loop();
     io.Loop();
+    rgb.Loop();
   }
   void Init() {
     sys_uart.Init();
@@ -63,6 +67,7 @@ class SnapControl {
   SnapTimer timer;
   SnapGcode gcode;
   SnapMPU mpu;
+  SnapRGB rgb;
 };
 
 extern SnapControl control_;

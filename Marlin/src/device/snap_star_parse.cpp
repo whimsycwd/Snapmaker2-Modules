@@ -131,6 +131,9 @@ ErrCode SnapStarParse::ParamAndExecute(uint8_t *cmd, SNAP_CMD_TYPE_E cmd_type, S
     case API_MPU:
       InitVariable(mpu);
       break;
+    case API_RGB:
+      InitVariable(rgb);
+      break;
     case API_INVALID:
       break;
   }
