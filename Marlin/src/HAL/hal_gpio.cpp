@@ -56,7 +56,7 @@ void GpioRemap() {
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }
 
-void GpioInit(uint8_t Port, uint8_t Mode) {
+void GpioInit(uint8_t Port, GPIO_MODE_E Mode) {
   GPIO_InitTypeDef GPIO_InitStruct;
   
   RCC_APB2PeriphClockCmd(RCCTable[Port / 16], ENABLE);
@@ -89,7 +89,7 @@ uint32_t GpioGetPort(uint8_t pin) {
 
 
 
-bool HalGPIO::Init(uint8_t pin, uint8_t mode) {
+bool HalGPIO::Init(uint8_t pin, GPIO_MODE_E mode) {
   if (pin >= Pxx) {
     init_ = false;
     pin_ = Pxx;
@@ -101,7 +101,7 @@ bool HalGPIO::Init(uint8_t pin, uint8_t mode) {
   return init_;
 }
 
-bool HalGPIO::StaticInit(uint8_t pin, uint8_t mode) {
+bool HalGPIO::StaticInit(uint8_t pin, GPIO_MODE_E mode) {
   if (pin < Pxx) {
     GpioInit(pin, mode);
     return  true;

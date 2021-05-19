@@ -62,7 +62,7 @@ static void PwmOcInit(TIM_TypeDef * tim, uint16_t chn, TIM_OCInitTypeDef * TIM_O
 }
 
 static void PwmPinInit(uint8_t tim, uint8_t pin) {
-    GpioInit(pin, GPIO_Mode_AF_PP);
+    GpioInit(pin, GPIO_AF_PP);
     if (tim >= PWM_TIM1_PARTIAL) {
         GPIO_PinRemapConfig(pwm_remap[tim - PWM_TIM1_PARTIAL],ENABLE);
     }

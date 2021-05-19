@@ -30,7 +30,7 @@ static uint8_t is_busy = false;
 void HAL_ShowRGB(uint8_t exti);
 // pin: eg. PA1
 void HAL_RGBInit(uint8_t pin, SOFT_EXTI_LINE_E exti) {
-  GpioInit(pin, GPIO_Mode_Out_PP);
+  GpioInit(pin, GPIO_OUT_PP);
   SoftExtiInit(exti, HAL_ShowRGB);
   soft_exti_line = exti;
 }
@@ -68,7 +68,7 @@ void HAL_SetAllRGB(uint8_t pin, RGB_T *rgb, uint8_t light_count) {
   while (is_busy);
   SoftExtiTrigger(soft_exti_line);
   while (is_busy);
-  rgb_delay(1000);
+  rgb_delay(5000);
 }
 
 void HAL_ShowRGB(uint8_t exti)

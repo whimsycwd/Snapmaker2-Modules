@@ -245,7 +245,7 @@ uint8_t HAL_adc_init_chn(ADC_CHN_E chn, ADC_TIM_E tim, uint16_t period_us) {
 uint8_t HAL_adc_init(uint8_t pin, ADC_TIM_E tim, uint16_t period_us) {
   for (uint8_t i = 0; i < sizeof(adc_pin_map); i++) {
     if (adc_pin_map[i] == pin) {
-      GpioInit(pin, GPIO_Mode_AIN);
+      GpioInit(pin, GPIO_AIN);
       return HAL_adc_init_chn((ADC_CHN_E)i, tim, period_us);
     }
   }
@@ -255,7 +255,7 @@ uint8_t HAL_adc_init(uint8_t pin, ADC_TIM_E tim, uint16_t period_us) {
 
 uint8_t HalADC::Init(ADC_CHN_E ch, ADC_TIM_E tim, uint16_t period_us) {
   tim_ = tim;
-  GpioInit(adc_pin_map[ch], GPIO_Mode_AIN);
+  GpioInit(adc_pin_map[ch], GPIO_AIN);
   return HAL_adc_init_chn(ch, tim, period_us);
 }
 

@@ -64,12 +64,12 @@ class SnapIO : public SnapControlBaes {
   SnapIO() {
     HalGPIO::DisableDebugIO();
   }
-  static void Init(SNAP_PIN_REMEP io, uint8_t mode=DEFAULT_PIN_W_MODE);
-  ErrCode Write(SNAP_PIN_REMEP io, bool level, uint8_t mode=DEFAULT_PIN_W_MODE);
-  ErrCode Read(SNAP_PIN_REMEP io, bool &out, uint8_t mode=DEFAULT_PIN_R_MODE);
-  ErrCode ReadSwitch(SNAP_PIN_REMEP io, bool &out, uint8_t mode=DEFAULT_PIN_R_MODE);
-  ErrCode Pwm(SNAP_PIN_REMEP io, uint32_t period_ms, uint8_t duty_cycle, uint8_t mode=DEFAULT_PIN_W_MODE);
-  ErrCode Reset(SNAP_PIN_REMEP io, uint32_t ms, uint8_t mode=DEFAULT_PIN_W_MODE);
+  static void Init(SNAP_PIN_REMEP io, GPIO_MODE_E mode=DEFAULT_PIN_W_MODE);
+  ErrCode Write(SNAP_PIN_REMEP io, bool level, GPIO_MODE_E mode=DEFAULT_PIN_W_MODE);
+  ErrCode Read(SNAP_PIN_REMEP io, bool &out, GPIO_MODE_E mode=DEFAULT_PIN_R_MODE);
+  ErrCode ReadSwitch(SNAP_PIN_REMEP io, bool &out, GPIO_MODE_E mode=DEFAULT_PIN_R_MODE);
+  ErrCode Pwm(SNAP_PIN_REMEP io, uint32_t period_ms, uint8_t duty_cycle, GPIO_MODE_E mode=DEFAULT_PIN_W_MODE);
+  ErrCode Reset(SNAP_PIN_REMEP io, uint32_t ms, GPIO_MODE_E mode=DEFAULT_PIN_W_MODE);
   void Loop();
   ErrCode StrControl(SnapCommonParam_t param, void * snap_return) {
     SnapReturnIO_t *ret = (SnapReturnIO_t *)snap_return;
@@ -77,8 +77,8 @@ class SnapIO : public SnapControlBaes {
       return E_FAILURE;
     }
     uint8_t write_index = param.write_index;
-    uint8_t read_mode = DEFAULT_PIN_R_MODE;
-    uint8_t write_mode = DEFAULT_PIN_W_MODE;
+    GPIO_MODE_E read_mode = DEFAULT_PIN_R_MODE;
+    GPIO_MODE_E write_mode = DEFAULT_PIN_W_MODE;
     bool is_report = false;
     for (uint8_t i = 0; i < param.count && (i < write_index || !write_index); i++) {
       if (param.param_type[i] == PARAM_STRING) {

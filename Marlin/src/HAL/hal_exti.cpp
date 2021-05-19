@@ -34,7 +34,7 @@ uint8_t ExtiInit(uint8_t pin, EXTI_MODE_E exti_mode, EXTI_CB_F cb) {
   EXTI_InitTypeDef   EXTI_InitStructure;
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  GpioInit(pin, GPIO_Mode_IN_FLOATING);
+  GpioInit(pin, GPIO_IN_FLOATING);
   GPIO_EXTILineConfig(port_source, pin_source);
 
   EXTI_InitStructure.EXTI_Line = 1 << pin_source;

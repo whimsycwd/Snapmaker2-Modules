@@ -23,8 +23,19 @@
 
 #include "../common/common.h"
 
+typedef enum {
+  GPIO_AIN,
+  GPIO_IN_FLOATING,
+  GPIO_IPD,
+  GPIO_IPU,
+  GPIO_OUT_OD,
+  GPIO_OUT_PP,
+  GPIO_AF_OD,
+  GPIO_AF_PP,
+}GPIO_MODE_E;
+
 void GpioRemap(void);
-void GpioInit(uint8_t Port, uint8_t Mode);
+void GpioInit(uint8_t Port, GPIO_MODE_E Mode);
 void GpioWrite(uint8_t Port, uint8_t IOLevel);
 uint8_t GpioRead(uint8_t Port);
 uint32_t GpioGetPort(uint8_t pin);
@@ -49,26 +60,15 @@ typedef struct {
   uint8_t is_inversion;
 }GPIO_Write_t;
 
-typedef enum {
-  GPIO_AIN,
-  GPIO_IN_FLOATING,
-  GPIO_IPD,
-  GPIO_IPU,
-  GPIO_OUT_OD,
-  GPIO_OUT_PP,
-  GPIO_AF_OD,
-  GPIO_AF_PP,
-}GPIO_MODE_E;
-
 class HalGPIO {
  public:
-  HalGPIO(uint8_t pin, uint8_t mode=GPIO_OUT_PP) {Init(pin, mode);};
+  HalGPIO(uint8_t pin, GPIO_MODE_E mode=GPIO_OUT_PP) {Init(pin, mode);};
   HalGPIO() {pin_ = Pxx;}
-  bool Init(uint8_t pin, uint8_t mode);
-  void SetMode(uint8_t mode) {
+  bool Init(uint8_t pin, GPIO_MODE_E mode);
+  void SetMode(GPIO_MODE_E mode) {
     Init(pin_, mode);
   }
-  static bool StaticInit(uint8_t pin, uint8_t mode);
+  static bool StaticInit(uint8_t pin, GPIO_MODE_E mode);
   bool Read();
   void Write(bool level);
   void High() {Write(1);}

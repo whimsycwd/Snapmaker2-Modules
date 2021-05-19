@@ -26,11 +26,11 @@ SnapIO_Status_t snap_io_satatus[IOxx] = {0};
 static uint32_t status_renew_time = 0;
 
 
-void SnapIO::Init(SNAP_PIN_REMEP io, uint8_t mode) {
+void SnapIO::Init(SNAP_PIN_REMEP io, GPIO_MODE_E mode) {
   HalGPIO::StaticInit(snap_io_remap[io], mode);
 }
 
-ErrCode SnapIO::Write(SNAP_PIN_REMEP io, bool level, uint8_t mode) {
+ErrCode SnapIO::Write(SNAP_PIN_REMEP io, bool level, GPIO_MODE_E mode) {
   if (io >= IOxx) 
     return E_PARAM;
   HalGPIO hal_io(snap_io_remap[io], mode);
@@ -38,7 +38,7 @@ ErrCode SnapIO::Write(SNAP_PIN_REMEP io, bool level, uint8_t mode) {
   return E_SUCCESS;
 }
 
-ErrCode SnapIO::Read(SNAP_PIN_REMEP io, bool &out, uint8_t mode) {
+ErrCode SnapIO::Read(SNAP_PIN_REMEP io, bool &out, GPIO_MODE_E mode) {
   if (io >= IOxx) 
     return E_PARAM;
   HalGPIO hal_io(snap_io_remap[io], mode);
@@ -46,15 +46,15 @@ ErrCode SnapIO::Read(SNAP_PIN_REMEP io, bool &out, uint8_t mode) {
   return E_SUCCESS;
 }
 
-ErrCode SnapIO::ReadSwitch(SNAP_PIN_REMEP io, bool &out, uint8_t mode) {
+ErrCode SnapIO::ReadSwitch(SNAP_PIN_REMEP io, bool &out, GPIO_MODE_E mode) {
   return E_SUCCESS;
 }
 
-ErrCode SnapIO::Pwm(SNAP_PIN_REMEP io, uint32_t period_ms, uint8_t duty_cycle, uint8_t mode) {
+ErrCode SnapIO::Pwm(SNAP_PIN_REMEP io, uint32_t period_ms, uint8_t duty_cycle, GPIO_MODE_E mode) {
   return E_SUCCESS;
 }
 
-ErrCode SnapIO::Reset(SNAP_PIN_REMEP io, uint32_t ms, uint8_t mode) {
+ErrCode SnapIO::Reset(SNAP_PIN_REMEP io, uint32_t ms, GPIO_MODE_E mode) {
   return E_SUCCESS;
 }
 
@@ -68,7 +68,8 @@ void SnapIO::Loop() {
     p_status = &snap_io_satatus[i];
     if (p_status->is_port) {
       bool status  = 0;
-      Read((SNAP_PIN_REMEP)i, status, p_status->mode);
+      GPIO_MODE_E mode = (GPIO_MODE_E)p_status->mode;
+      Read((SNAP_PIN_REMEP)i, status, mode);
       p_status->status <<= 1;
       p_status->status |= status;
       if ((p_status->status == SNAP_IO_STATUS_MASK) || (p_status->status == 0)) {
