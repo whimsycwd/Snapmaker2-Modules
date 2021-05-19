@@ -51,6 +51,7 @@ class SnapControl {
   }
   void Init() {
     sys_uart.Init();
+    HalGPIO::DisableDebugIO();
   }
 
  public:

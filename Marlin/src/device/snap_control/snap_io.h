@@ -5,8 +5,8 @@
 #include "snap_control_base.h"
 #include "sys_uart.h"
 
-#define DEFAULT_PIN_R_MODE GPIO_IN_FLOATING
-#define DEFAULT_PIN_W_MODE GPIO_OUT_OD
+#define DEFAULT_PIN_R_MODE GPIO_IPU
+#define DEFAULT_PIN_W_MODE GPIO_OUT_PP
 
 #define SNAP_IO_STATUS_MASK 0xf
 
@@ -77,16 +77,17 @@ class SnapIO : public SnapControlBaes {
       return E_FAILURE;
     }
     uint8_t write_index = param.write_index;
-    uint8_t mode = DEFAULT_PIN_R_MODE;
+    uint8_t read_mode = DEFAULT_PIN_R_MODE;
+    uint8_t write_mode = DEFAULT_PIN_W_MODE;
     bool is_report = false;
     for (uint8_t i = 0; i < param.count && (i < write_index || !write_index); i++) {
       if (param.param_type[i] == PARAM_STRING) {
         switch (param.value[i].s[0]) {
-          case 'u': mode = GPIO_IPU; break;
-          case 'd': mode = GPIO_IPD; break;
-          case 'f': mode = GPIO_IN_FLOATING; break;
-          case 'p': mode = GPIO_OUT_PP; break;
-          case 'o': mode = GPIO_OUT_OD; break;
+          case 'u': read_mode = GPIO_IPU; break;
+          case 'd': read_mode = GPIO_IPD; break;
+          case 'f': read_mode = GPIO_IN_FLOATING; break;
+          case 'p': write_mode = GPIO_OUT_PP; break;
+          case 'o': write_mode = GPIO_OUT_OD; break;
           case 'k': is_report = true; break;
         }
       }
@@ -101,15 +102,16 @@ class SnapIO : public SnapControlBaes {
     if (param.write_index) {
       ret->type = IO_CONTROL_WRITE;
       if (param.param_type[write_index] == PARAM_INT) {
-        ret->err_code = Write((SNAP_PIN_REMEP)param.sub_num, param.value[write_index].i, mode);
+        ret->err_code = Write((SNAP_PIN_REMEP)param.sub_num, param.value[write_index].i, write_mode);
       }
+      snap_io_satatus[ret->io].mode = write_mode;
       is_report = false;
     } else{
       ret->type = IO_CONTROL_READ;
-      ret->err_code = Read((SNAP_PIN_REMEP)param.sub_num, ret->value, mode);
+      ret->err_code = Read((SNAP_PIN_REMEP)param.sub_num, ret->value, read_mode);
       snap_io_satatus[ret->io].last_status = ret->value ? SNAP_IO_STATUS_MASK : 0;
+      snap_io_satatus[ret->io].mode = read_mode;
     }
-    snap_io_satatus[ret->io].mode = mode;
     snap_io_satatus[ret->io].is_port = is_report;
     return E_SUCCESS;
   }
