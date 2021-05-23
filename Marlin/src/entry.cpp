@@ -46,6 +46,8 @@ void setup() {
   startupInstance.BasePeriphInit();
   startupInstance.PeriphInit();
   startupInstance.FuncIdListInit();
+
+
 }
 
 void loop() {
